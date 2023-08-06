@@ -18,6 +18,15 @@ class Example {
         return (int)evaluate(root); // post-order traversal of the tree
     }
 
+
+    private void printStack(Stack<TreeNode> s) {
+        System.out.println("Stack ----------------------------");
+        for (int i = 0; i < s.size(); i++){
+            System.out.println(s.get(i).str);
+        }
+    }
+
+
     // build tree based on input string, min-tree. return root
     private TreeNode buildTree(String s) {
         int n = s.length();
@@ -50,12 +59,14 @@ class Example {
 
             // use monotonous stack to build min-tree
             TreeNode node = new TreeNode(getWeight(base, c), str);
+            printStack(stack);
             while (!stack.isEmpty() && node.weight <= stack.peek().weight) {
                 node.left = stack.pop();
             }
             if (!stack.isEmpty()) {
                 stack.peek().right = node;
             }
+
             stack.push(node);
 
         }
