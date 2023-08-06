@@ -26,6 +26,16 @@ class Example {
         }
     }
 
+    private void printTree(TreeNode root, String indent) {
+        if (root == null) {
+            return;
+        }
+        System.out.println(indent + root.str + "W:" + root.weight);
+        printTree(root.left, indent + "----");
+        printTree(root.right, indent + "----");
+
+    }
+
 
     // build tree based on input string, min-tree. return root
     private TreeNode buildTree(String s) {
@@ -35,6 +45,7 @@ class Example {
         int base = 0;
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < n; i++) {
+            System.out.println("****  loop iteration " + i);
             char c = chars[i];
             if (c == ' ') {
                 continue;
@@ -58,12 +69,21 @@ class Example {
             }
 
             // use monotonous stack to build min-tree
+
             TreeNode node = new TreeNode(getWeight(base, c), str);
+            System.out.println("Current Node");
+
+            printTree(node, "");
             printStack(stack);
-            while (!stack.isEmpty() && node.weight <= stack.peek().weight) {
+
+            while (!stack.isEmpty() && node.weight < stack.peek().weight) {
+                System.out.println(" !!!! POPPOP ");
                 node.left = stack.pop();
+                printTree(node, "");
             }
+            // node can be either an operatand or a partial operator treee
             if (!stack.isEmpty()) {
+                System.out.println(" ooooo attach right");
                 stack.peek().right = node;
             }
 
@@ -74,7 +94,8 @@ class Example {
         while (!stack.isEmpty()) {
             root = stack.pop();
         }
-
+        System.out.println("Final root");
+        printTree(root, "");
         return root; // it's the root of tree, always a operator
     }
 
