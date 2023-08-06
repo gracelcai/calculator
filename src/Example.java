@@ -18,35 +18,51 @@ class Example {
         return (int)evaluate(root); // post-order traversal of the tree
     }
 
+    private boolean isOperator(char c) {
+        // TODO ( )
+        return c == '+' || c  == '-' || c == '*' || c == '/';
+    }
+
     // build tree based on input string, min-tree. return root
     private TreeNode buildTree(String s) {
+        State state = State.BEGIN;
         int n = s.length();
         char[] chars = s.trim().toCharArray();
         Stack<TreeNode> stack = new Stack<>();
         int base = 0;
-        StringBuffer sb = new StringBuffer();
+        StringBuffer operand = new StringBuffer();
+        char operator;
         for (int i = 0; i < n; i++) {
             char c = chars[i];
+
             if (c == ' ') {
                 continue;
-            } else if (c == '(') { // '()' are used to add weight, not stored in tree
-                base = getWeight(base, c);
-                continue;
-            } else if (c == ')') {
-                base = getWeight(base, c);
-                continue;
-            } else if (i < n - 1 && isDigit(chars[i]) && isDigit(chars[i + 1])) { // continue to get remaining of the int
-                sb.append(c);
-                continue;
             }
-            String str;
-            if (isDigit(c)) {
-                sb.append(c);
-                str = sb.toString();
-                sb.setLength(0); // clean up
-            } else {
-                str = c + "";
+            if (state == State.BEGIN) {
+                if (isDigit(c)) {
+                    state = State.IN_DIGIT;
+                    operand.append(c);
+                } else {
+                    assert (isOperator(c) );
+                    state = State.OPERATOR;
+                    operator = c;
+                }
+            } else if (state == State.IN_DIGIT) {
+                if (isDigit(c)) {
+                    state = State.IN_DIGIT;
+                    operand.append(c);
+                } else {
+                    state = State.OPERATOR;
+                    operator = c;
+                }
+            } else if (state == State.OPERATOR) {
+                assert(isDigit(c));
+                if (isDigit(c)) {
+                    state = State.IN_DIGIT;
+                    operand.append(c);
+                }
             }
+
 
             // use monotonous stack to build min-tree
             TreeNode node = new TreeNode(getWeight(base, c), str);
